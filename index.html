@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR ">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Scanear de código de barras </title>  
+
+    <script src="./node_modules/html5-qrcode/html5-qrcode.min.js"></script>
+
+  </head>
+  <body>
+    <style>
+      main {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+      #reader {
+          width: 600px;
+      }
+      #result {
+          text-align: center;
+          font-size: 1.5rem;
+      }
+  </style>
+  
+  <main>
+      <div style="flex-direction: column;" >
+      <div id="sistem"></div>  
+      <div id="browser"></div>
+      <div id="reader"></div>
+      <div id="result"></div>
+      </div>
+  </main>
+      
+  
+  <script>
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                // Permissão concedida, inicialize o scanner aqui
+                initializeScanner();
+            })
+            .catch(function(err) {
+                console.log("Erro ao acessar a câmera: ", err);
+                document.getElementById('result').innerHTML = "Por favor, conceda permissão para acessar a câmera.";
+            });
+
+        function initializeScanner() {
+
+            getOS();
+            getBrowserInfo();
+
+            // Coloque aqui o código existente para inicializar o scanner
+            scanner.render(success, error);
+            // Starts scanner
+        }
+
+  
+      const scanner = new Html5QrcodeScanner('reader', { 
+          // Scanner will be initialized in DOM inside element with id of 'reader'
+          qrbox: {
+              width: 250,
+              height: 250,
+          },  // Sets dimensions of scanning box (set relative to reader element width)
+          fps: 20, // Frames per second to attempt a scan
+          facingMode: { exact: "environment" } // Força o uso da câmera traseira
+      });
+  
+  
+      
+  
+      function success(result) {
+  
+          document.getElementById('result').innerHTML = `
+          <h2>Success!</h2>
+          <p><a href="${result}">${result}</a></p>
+          `;
+          // Prints result as a link inside result element
+  
+          getOS()
+
+
+          scanner.clear();
+          // Clears scanning instance
+  
+          document.getElementById('reader').remove();
+          // Removes reader element from DOM since no longer needed
+      
+      }
+
+      function getOS() {
+        const userAgent = window.navigator.userAgent;
+        const platform = window.navigator.platform;
+        const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
+        const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
+        const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+        
+        if (macosPlatforms.includes(platform)) {
+            return 'Mac OS';
+        } else if (iosPlatforms.includes(platform)) {
+            return 'iOS';
+        } else if (windowsPlatforms.includes(platform)) {
+            return 'Windows';
+        } else if (/Android/.test(userAgent)) {
+            return 'Android';
+        } else if (/Linux/.test(platform)) {
+            return 'Linux';
+        } else {
+            return 'Unknown';
+        }
+      }
+
+      function getBrowserInfo() {
+        const userAgent = navigator.userAgent;
+        let browserName, browserVersion;
+
+        if (userAgent.includes("Firefox")) {
+            browserName = "Firefox";
+            browserVersion = userAgent.match(/Firefox\/([0-9]+(\.[0-9]+)?)/)[1];
+        } else if (userAgent.includes("Edg")) {
+            browserName = "Microsoft Edge";
+            browserVersion = userAgent.match(/Edg\/([0-9]+(\.[0-9]+)?)/)[1];
+        } else if (userAgent.includes("Chrome")) {
+            browserName = "Chrome";
+            browserVersion = userAgent.match(/Chrome\/([0-9]+(\.[0-9]+)?)/)[1];
+        } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
+            browserName = "Safari";
+            browserVersion = userAgent.match(/Version\/([0-9]+(\.[0-9]+)?)/)[1];
+        } else if (userAgent.includes("Opera") || userAgent.includes("OPR")) {
+            browserName = "Opera";
+            browserVersion = userAgent.match(/(Opera|OPR)\/([0-9]+(\.[0-9]+)?)/)[2];
+        } else {
+            browserName = "Unknown";
+            browserVersion = "Unknown";
+        }
+
+        return `${browserName} ${browserVersion}`;
+      }
+
+      console.log('Navegador e versão:', getBrowserInfo());
+      document.getElementById('browser').innerHTML = "Navegador e versão: " + getBrowserInfo();
+
+
+      console.log('Sistema Operacional:', getOS());
+      document.getElementById('sistem').innerHTML = "Sistema Operacional: " + getOS();
+
+  
+      function error(err) {
+        console.error(err);
+        if (err.name === 'NotReadableError') {
+            document.getElementById('result').innerHTML = `
+            <h2>Erro ao acessar a câmera</h2>
+            <p>Por favor, verifique as permissões da câmera nas configurações do seu dispositivo.</p>
+            `;
+        }
+      }
+  
+  </script>
+  </body>
+</!DOCTYPE>
+
