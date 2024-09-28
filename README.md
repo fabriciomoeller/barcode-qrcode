@@ -3,25 +3,25 @@
 ## Uso de certificado ssl
 
 1. Primeiro, instale o OpenSSL se ainda não estiver instalado:
-´´´ bash
+``` bash
 sudo apt update
 sudo apt install openssl
-´´´
+```
 2. Gere um certificado autoassinado (como mencionado anteriormente):
-´´´ bash
+``` bash
 openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
-´´´
+```
 
 ## servidor http para teste
 
 1.Instale o http-server globalmente via npm:
-´´´ bash
+``` bash
 npm install -g http-server
-´´´
+```
 4. Inicie o servidor HTTPS no diretório atual:
-´´´ bash
+```bash
 http-server -S -C cert.pem -K key.pem
-´´´
+```
 
 Isso iniciará um servidor HTTPS local.
 
